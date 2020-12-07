@@ -17,9 +17,9 @@ public class OtusTest extends BaseTest {
 
         aboutPage.goTo(cfg.url_otus_about());
 
-        aboutPage.fillAllFields();
+        aboutPage.uncheckAllCheckboxes();
 
-        aboutPage.fillContact();
+        aboutPage.fillAllFields();
 
         aboutPage.save();
 

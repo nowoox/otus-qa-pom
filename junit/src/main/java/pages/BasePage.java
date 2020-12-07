@@ -28,11 +28,15 @@ public abstract class BasePage {
 
     public BasePage(WebDriver webDriver) {
         this.driver = webDriver;
-        webDriverWait = new WebDriverWait(webDriver, 4);
+        webDriverWait = new WebDriverWait(webDriver, 15);
     }
 
     public void waitVisibility(By elementBy){
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(elementBy));
+    }
+
+    public void waitPresense(By elementBy){
+        webDriverWait.until(ExpectedConditions.presenceOfElementLocated(elementBy));
     }
 
     public void click(By elementBy){

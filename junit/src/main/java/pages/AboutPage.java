@@ -3,13 +3,15 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AboutPage extends BasePage{
+public class AboutPage extends BasePage {
 
     protected String ABOUT_PAGE_HEADER = ".title__text";
 
@@ -34,6 +36,7 @@ public class AboutPage extends BasePage{
             "div[contains(@class, 'container__col_md-0')]//button[.='Удалить']/../../../";
 
     protected Map<String, String> textFieldsMap = new HashMap<>();
+    protected Map<String, String> contactMap = new HashMap<>();
     protected Map<String, String> dropdownFieldsMapButton = new LinkedHashMap<>();
     protected Map<String, String> dropdownFieldsMapOption = new LinkedHashMap<>();
 
@@ -41,7 +44,7 @@ public class AboutPage extends BasePage{
         super(webDriver);
     }
 
-    public void fillTextFields(){
+    public void fillTextFields() {
 
         waitVisibility(By.cssSelector(ABOUT_PAGE_HEADER));
 
@@ -54,12 +57,12 @@ public class AboutPage extends BasePage{
         textFieldsMap.put(ABOUT_PAGE_COMPANY_SELECTOR, "Компания");
         textFieldsMap.put(ABOUT_PAGE_POSITION_SELECTOR, "Должность");
 
-        for (Map.Entry entry : textFieldsMap.entrySet()){
+        for (Map.Entry entry : textFieldsMap.entrySet()) {
             type(By.cssSelector(entry.getKey().toString()), entry.getValue().toString());
         }
     }
 
-    public void fillDropdownFieldsButton(){
+    public void fillDropdownFieldsButton() throws InterruptedException {
 
         waitVisibility(By.cssSelector(ABOUT_PAGE_HEADER));
 
@@ -67,106 +70,133 @@ public class AboutPage extends BasePage{
         dropdownFieldsMapButton.put(ABOUT_PAGE_CITY_SELECTOR, "Москва");
         dropdownFieldsMapButton.put(ABOUT_PAGE_LANGUAGE_SELECTOR, "Продвинутый (Advanced)");
 
-        for (Map.Entry entry : dropdownFieldsMapButton.entrySet()){
+        for (Map.Entry entry : dropdownFieldsMapButton.entrySet()) {
 
-            waitVisibility(By.cssSelector(entry.getKey().toString()));
+            waitPresense(By.cssSelector(entry.getKey().toString()));
 
-            driver.findElement(By.cssSelector(entry.getKey().toString())).click();
+            //webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(entry.getKey().toString())));
+
+            Actions builder = new Actions(driver);
+
+            builder.moveToElement(driver.findElement(By.cssSelector(entry.getKey().toString())))
+                    .click().build().perform();
             logger.info("Открыт выпадающий список " + entry.getKey());
 
-            waitVisibility(By.xpath("//button[@title='"+entry.getValue()+"']"));
+            waitVisibility(By.xpath("//button[@title='" + entry.getValue() + "']"));
 
-            driver.findElement(By.xpath("//button[@title='"+entry.getValue()+"']")).click();
+            //driver.findElement(By.xpath("//button[@title='" + entry.getValue() + "']")).click();
+            click(By.xpath("//button[@title='" + entry.getValue() + "']"));
             logger.info("Выбрано значение выпадающего списка " + entry.getValue());
         }
 
+
     }
 
-    public void fillDropdownFieldsOption(){
+    public void fillDropdownFieldsOption() {
 
         waitVisibility(By.cssSelector(ABOUT_PAGE_HEADER));
 
         dropdownFieldsMapOption.put(ABOUT_PAGE_GENDER_SELECTOR, "Мужской");
 
-        for (Map.Entry entry : dropdownFieldsMapOption.entrySet()){
+        for (Map.Entry entry : dropdownFieldsMapOption.entrySet()) {
 
             waitVisibility(By.cssSelector(entry.getKey().toString()));
 
             driver.findElement(By.cssSelector(entry.getKey().toString())).click();
             logger.info("Открыт выпадающий список " + entry.getKey());
 
-            waitVisibility(By.xpath("//option[.='"+entry.getValue()+"']"));
+            waitVisibility(By.xpath("//option[.='" + entry.getValue() + "']"));
 
-            driver.findElement(By.xpath("//option[.='"+entry.getValue()+"']")).click();
+            driver.findElement(By.xpath("//option[.='" + entry.getValue() + "']")).click();
             logger.info("Выбрано значение выпадающего списка " + entry.getValue());
         }
 
     }
 
-    public void fillAllFields(){
+    public void fillContact() {
 
+        contactMap.put("VK", "Вконтакте");
+        contactMap.put("Facebook","Фейсбук");
+        contactMap.put("Тelegram","Телеграм");
+
+        waitVisibility(By.cssSelector(ABOUT_PAGE_HEADER));
+
+        List<WebElement> deleteButtons = driver.findElements(By.xpath("//div[contains(@class, 'container__col_md-0')]//*[.='Удалить']"));
+
+        for (WebElement element : deleteButtons) {
+            element.click();
+        }
+
+        //addContact("VK", "Вконтакте");
+        //addContact("Facebook", "Фейсбук");
+        //addContact("Тelegram", "Телеграм");
+
+        for (Map.Entry entry : contactMap.entrySet()){
+            addContact(entry.getKey().toString(), entry.getValue().toString());
+            logger.info("Для способа связи " + entry.getKey() + " введено значение " + entry.getValue());
+        }
+
+    }
+
+    protected void addContact(String Name, String Text) {
+
+        click(By.xpath(ABOUT_PAGE_ADD_BUTTON));
+
+        waitVisibility(By.xpath(ABOUT_PAGE_ADD_BLOCK + "/*[.='Способ связи']"));
+
+        click(By.xpath(ABOUT_PAGE_ADD_BLOCK + "/*[.='Способ связи']"));
+        click(By.xpath(ABOUT_PAGE_ADD_BLOCK + "/div[not(contains(@class,'hide'))]/div/button[@title='" + Name + "']"));
+        type(By.xpath("(" + ABOUT_PAGE_ADD_BLOCK + "/input[contains(@class, 'input_straight-top-left')])[last()]"), Text);
+
+        click(By.xpath("(" + ABOUT_PAGE_ADD_BLOCK + "/input[@type='checkbox']/following-sibling::span)[last()]"));
+
+    }
+
+    public void checkFilledFields() {
+
+        waitVisibility(By.cssSelector(ABOUT_PAGE_HEADER));
+
+        for (Map.Entry entry : textFieldsMap.entrySet()) {
+            assertEquals(driver.findElement(By.cssSelector(entry.getKey().toString())).getAttribute("value"), entry.getValue());
+            logger.info("Поле " + entry.getKey() + " заполнено верно, значение " + entry.getValue());
+        }
+
+        for (Map.Entry entry : dropdownFieldsMapButton.entrySet()) {
+            assertEquals(driver.findElement(By.cssSelector(entry.getKey().toString())).getText(), entry.getValue());
+            logger.info("Поле " + entry.getKey() + " заполнено верно, значение " + entry.getValue());
+        }
+
+        for (Map.Entry entry : dropdownFieldsMapOption.entrySet()) {
+            Select select = new Select(driver.findElement(By.cssSelector(entry.getKey().toString())));
+            assertEquals(select.getFirstSelectedOption().getText(), entry.getValue());
+            logger.info("Поле " + entry.getKey() + " заполнено верно, значение " + entry.getValue());
+        }
+
+    }
+
+    public void save() {
+        click(By.cssSelector("button.button_md-4:nth-child(1)"));
+    }
+
+    public void fillAllFields() throws InterruptedException {
+
+        fillContact();
         fillDropdownFieldsButton();
         fillDropdownFieldsOption();
         fillTextFields();
 
     }
 
-    public void fillContact(){
+    public void uncheckAllCheckboxes(){
 
-        waitVisibility(By.cssSelector(ABOUT_PAGE_HEADER));
+        waitPresense(By.xpath("//input[@type='checkbox' and @checked]/following-sibling::span"));
 
-        //List deleteButtons = new ArrayList();
+        List<WebElement> checked = driver.findElements(By.xpath("//input[@type='checkbox' and @checked]/following-sibling::span"));
 
-        List<WebElement> deleteButtons = driver.findElements(By.xpath("//div[contains(@class, 'container__col_md-0')]//*[.='Удалить']"));
-
-        for (WebElement element : deleteButtons){
-
+        for (WebElement element : checked){
             element.click();
-
+            logger.info("Выполнен клик по элементу " + element);
         }
-
-        click(By.xpath(ABOUT_PAGE_ADD_BUTTON));
-
-        //waitVisibility(By.xpath(ABOUT_PAGE_ADD_BLOCK));
-
-
-        driver.findElement(By.xpath(ABOUT_PAGE_ADD_BLOCK + "/*[.='Способ связи']")).click();
-
-        driver.findElement(By.xpath(ABOUT_PAGE_ADD_BLOCK + "/button[@title='Facebook']")).click();
-        driver.findElement(By.xpath(ABOUT_PAGE_ADD_BLOCK + "/input[contains(@class, 'input_straight-top-left')]")).sendKeys("100500");
-
-        click(By.xpath(ABOUT_PAGE_ADD_BUTTON));
-
-        driver.findElement(By.xpath(ABOUT_PAGE_ADD_BLOCK + "/*[.='Способ связи']")).click();
-
-        driver.findElements(By.xpath(ABOUT_PAGE_ADD_BLOCK + "/button[@title='VK']")).get(1).click();
-        driver.findElements(By.xpath(ABOUT_PAGE_ADD_BLOCK + "/input[contains(@class, 'input_straight-top-left')]")).get(1).sendKeys("200500");
-
-    }
-
-    public void checkFilledFields(){
-
-        waitVisibility(By.cssSelector(ABOUT_PAGE_HEADER));
-
-        for (Map.Entry entry : textFieldsMap.entrySet()){
-            assertEquals(driver.findElement(By.cssSelector(entry.getKey().toString())).getAttribute("value"), entry.getValue());
-            logger.info("Поле " + entry.getKey() + " заполнено верно, значение " + entry.getValue());
-        }
-
-        for (Map.Entry entry : dropdownFieldsMapButton.entrySet()){
-            assertEquals(driver.findElement(By.cssSelector(entry.getKey().toString())).getText(), entry.getValue());
-            logger.info("Поле " + entry.getKey() + " заполнено верно, значение " + entry.getValue());
-        }
-
-        for (Map.Entry entry : dropdownFieldsMapOption.entrySet()){
-            Select select = new Select(driver.findElement(By.cssSelector(entry.getKey().toString())));
-            assertEquals(select.getFirstSelectedOption().getText(), entry.getValue());
-            logger.info("Поле " + entry.getKey() + " заполнено верно, значение " + entry.getValue());        }
-
-    }
-
-    public void save(){
-        click(By.cssSelector("button.button_md-4:nth-child(1)"));
     }
 
 
