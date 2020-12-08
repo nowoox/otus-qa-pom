@@ -11,6 +11,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.concurrent.TimeUnit;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -35,7 +37,7 @@ public abstract class BasePage {
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(elementBy));
     }
 
-    public void waitPresense(By elementBy){
+    public void waitPresence(By elementBy){
         webDriverWait.until(ExpectedConditions.presenceOfElementLocated(elementBy));
     }
 
@@ -57,7 +59,4 @@ public abstract class BasePage {
         logger.info("В поле " + elementBy + " введен текст " + text);
     }
 
-    public void tickCheckBox(){
-
-    }
 }

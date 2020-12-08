@@ -1,6 +1,7 @@
 import base.BaseTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 
 public class OtusTest extends BaseTest {
@@ -9,27 +10,30 @@ public class OtusTest extends BaseTest {
     @DisplayName("Переход на сайт")
     public void Test() throws InterruptedException {
 
-        mainPage.goTo(cfg.url_otus());
+        loginPage.goTo(cfg.url_otus());
 
-        mainPage.Login();
+        loginPage.Login();
 
-        Thread.sleep(3000);
+        //Thread.sleep(3000);
 
-        aboutPage.goTo(cfg.url_otus_about());
+        //WebDriverWait wait = new WebDriverWait(driver.)
+        //driver.navigate().to(cfg.url_otus_about());
 
-        aboutPage.uncheckAllCheckboxes();
+        mainPage.goToPersonal();
+
+        //mainPage.goTo(cfg.url_otus_about());
 
         aboutPage.fillAllFields();
 
         aboutPage.save();
 
-        Thread.sleep(5000);
+        //Thread.sleep(5000);
 
         aboutPage.goTo(cfg.url_otus_about());
 
         aboutPage.checkFilledFields();
 
-        Thread.sleep(5000);
+        //Thread.sleep(5000);
 
     }
 

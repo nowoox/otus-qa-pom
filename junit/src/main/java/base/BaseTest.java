@@ -5,13 +5,12 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.aeonbits.owner.ConfigFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 import pages.AboutPage;
+import pages.LoginPage;
 import pages.MainPage;
 
 public class BaseTest {
@@ -19,8 +18,9 @@ public class BaseTest {
     protected WebDriver driver;
     public Logger logger = LogManager.getLogger(BaseTest.class);
     public ServerConfig cfg = ConfigFactory.create(ServerConfig.class);
-    public MainPage mainPage;
+    public LoginPage loginPage;
     public AboutPage aboutPage;
+    public MainPage mainPage;
 
     @BeforeEach
     public void setUp(){
@@ -29,8 +29,9 @@ public class BaseTest {
             WebDriverManager.chromedriver().setup();
             driver = driverFactory.createDriver();
             logger.info("Драйвер запущен");
-            mainPage = PageFactory.initElements(driver, MainPage.class);
+            loginPage = PageFactory.initElements(driver, LoginPage.class);
             aboutPage = PageFactory.initElements(driver, AboutPage.class);
+            mainPage = PageFactory.initElements(driver, MainPage.class);
         } catch (Exception e){
 
         }

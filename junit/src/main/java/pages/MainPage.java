@@ -2,36 +2,29 @@ package pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.interactions.Actions;
 
-public class MainPage extends BasePage{
+public class MainPage extends BasePage {
 
-    protected String LOGIN_PAGE_SELECTOR = ".header2__auth";
-    protected String LOGIN_PAGE_HEADER_SELECTOR = "div.new-log-reg__login:nth-child(2) > div:nth-child(1) > div:nth-child(1) > span:nth-child(1)";
-    protected String LOGIN_PAGE_LOGIN_SELECTOR = "//form[@data-type='modal-form']//input[@placeholder='Электронная почта']";
-    protected String LOGIN_PAGE_PASSWORD_SELECTOR = ".js-psw-input";
-    protected String LOGIN_PAGE_LOGIN_BUTTON_SELECTOR = "div.new-input-line_last:nth-child(5) > button:nth-child(1)";
+    protected String MAIN_PAGE_PROFILE_LINK = ".header2-menu__dropdown-text";
 
     public MainPage(WebDriver webDriver) {
         super(webDriver);
     }
 
-    public void Login(){
+    public void goToPersonal(){
 
-        waitVisibility(By.cssSelector(LOGIN_PAGE_SELECTOR));
+        waitPresence(By.cssSelector(MAIN_PAGE_PROFILE_LINK));
 
-        click(By.cssSelector(LOGIN_PAGE_SELECTOR));
+        Actions builder = new Actions(driver);
 
-        isElementDisplayed(By.cssSelector(LOGIN_PAGE_HEADER_SELECTOR));
+        builder.moveToElement(driver.findElement(By.cssSelector(".header2-menu__item-text__username")))
+                .build()
+                .perform();
 
-        waitVisibility(By.xpath(LOGIN_PAGE_LOGIN_SELECTOR));
+        waitVisibility(By.cssSelector(MAIN_PAGE_PROFILE_LINK));
 
-        type(By.xpath(LOGIN_PAGE_LOGIN_SELECTOR), cfg.login());
-
-        type(By.cssSelector(LOGIN_PAGE_PASSWORD_SELECTOR), cfg.password());
-
-        click(By.cssSelector(LOGIN_PAGE_LOGIN_BUTTON_SELECTOR));
+        driver.findElement(By.cssSelector(MAIN_PAGE_PROFILE_LINK)).click();
 
     }
-
 }

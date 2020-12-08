@@ -5,9 +5,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -62,7 +64,7 @@ public class AboutPage extends BasePage {
         }
     }
 
-    public void fillDropdownFieldsButton() throws InterruptedException {
+    public void fillDropdownFieldsButton() {
 
         waitVisibility(By.cssSelector(ABOUT_PAGE_HEADER));
 
@@ -72,7 +74,7 @@ public class AboutPage extends BasePage {
 
         for (Map.Entry entry : dropdownFieldsMapButton.entrySet()) {
 
-            waitPresense(By.cssSelector(entry.getKey().toString()));
+            waitPresence(By.cssSelector(entry.getKey().toString()));
 
             //webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(entry.getKey().toString())));
 
@@ -127,10 +129,6 @@ public class AboutPage extends BasePage {
             element.click();
         }
 
-        //addContact("VK", "Вконтакте");
-        //addContact("Facebook", "Фейсбук");
-        //addContact("Тelegram", "Телеграм");
-
         for (Map.Entry entry : contactMap.entrySet()){
             addContact(entry.getKey().toString(), entry.getValue().toString());
             logger.info("Для способа связи " + entry.getKey() + " введено значение " + entry.getValue());
@@ -176,10 +174,13 @@ public class AboutPage extends BasePage {
 
     public void save() {
         click(By.cssSelector("button.button_md-4:nth-child(1)"));
+
+        waitVisibility(By.cssSelector(ABOUT_PAGE_HEADER));
     }
 
     public void fillAllFields() throws InterruptedException {
 
+        uncheckAllCheckboxes();
         fillContact();
         fillDropdownFieldsButton();
         fillDropdownFieldsOption();
@@ -189,7 +190,7 @@ public class AboutPage extends BasePage {
 
     public void uncheckAllCheckboxes(){
 
-        waitPresense(By.xpath("//input[@type='checkbox' and @checked]/following-sibling::span"));
+        waitPresence(By.xpath("//input[@type='checkbox' and @checked]/following-sibling::span"));
 
         List<WebElement> checked = driver.findElements(By.xpath("//input[@type='checkbox' and @checked]/following-sibling::span"));
 
