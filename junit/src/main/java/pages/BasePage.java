@@ -41,6 +41,10 @@ public abstract class BasePage {
         webDriverWait.until(ExpectedConditions.presenceOfElementLocated(elementBy));
     }
 
+    public void waitIsClickable(By elementBy){
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(elementBy));
+    }
+
     public void click(By elementBy){
         waitVisibility(elementBy);
         driver.findElement(elementBy).click();

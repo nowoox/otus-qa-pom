@@ -25,6 +25,7 @@ public class MainPage extends BasePage {
         waitVisibility(By.cssSelector(MAIN_PAGE_PROFILE_LINK));
 
         driver.findElement(By.cssSelector(MAIN_PAGE_PROFILE_LINK)).click();
+        logger.info("Выполнен переход в личный кабинет");
 
     }
 }
